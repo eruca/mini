@@ -18,36 +18,29 @@ const (
 	appid            = "wx4eed36199e7795df"
 	secret           = "30022d0725786808833d8a7fbe3238e7"
 
-	token_access = "token_access"
-
-	errcode1 = `{"errcode":`
-	errcode2 = `{"errmsg":`
+	access_token = "access_token"
 )
 
 var (
-	cache          = ccache.New(ccache.Configure())
-	GetTokenAccess = getTokenAccessWrapper(appid, secret)
+	cache = ccache.New(ccache.Configure())
 )
 
-func getTokenAccessWrapper(appid, secret string) func() (string, error) {
-	expiresIn := 7200 * time.Second
+func GetTokenAccess() (string, error) {
+	return getTokenAccess(appid, secret)
+}
 
-	return func() (string, error) {
-		item, err := cache.Fetch(token_access, expiresIn, func() (interface{}, error) {
-			req := TokenAccessRequest{Appid: appid, Secret: secret}
-			ta, err := req.Do()
-			if err != nil {
-				return nil, err
-			}
-			expiresIn = time.Duration(ta.ExpiresIn) * time.Second
-			return ta.AccessToken, nil
-		})
-		if err != nil {
-			return "", err
-		}
-
+func getTokenAccess(appid, secret string) (string, error) {
+	item := cache.Get(access_token)
+	if item != nil && !item.Expired() {
 		return item.Value().(string), nil
 	}
+	req := TokenAccessRequest{Appid: appid, Secret: secret}
+	ta, err := req.Do()
+	if err != nil {
+		return "", err
+	}
+	cache.Set(access_token, ta.AccessToken, time.Duration(ta.ExpiresIn)*time.Second)
+	return ta.AccessToken, nil
 }
 
 type TokenAccessRequest struct {
@@ -76,27 +69,27 @@ func (t *TokenAccessRequest) Do() (*TokenAccess, error) {
 			return nil, err
 		}
 
-		// 如果以errcode1或errcode2开始就是返回错误
-		if bytes.HasPrefix(data, []byte(errcode1)) || bytes.HasPrefix(data, []byte(errcode2)) {
-			var respFail ResponseFailure
-			err = json.Unmarshal(data, &respFail)
+		if bytes.Contains(data, []byte(access_token)) {
+			ta := &TokenAccess{}
+			err = json.Unmarshal(data, ta)
 			if err != nil {
 				return nil, err
 			}
-			if respFail.Errcode == -1 {
-				errCode = -1
-				time.Sleep(time.Duration(i+1) * time.Microsecond * 500)
-				continue
-			}
-			return nil, errors.New(respFail.Errmsg)
+			return ta, nil
 		}
 
-		ta := &TokenAccess{}
-		err = json.Unmarshal(data, ta)
+		// 如果以errcode1或errcode2开始就是返回错误
+		var respFail ResponseFailure
+		err = json.Unmarshal(data, &respFail)
 		if err != nil {
 			return nil, err
 		}
-		return ta, nil
+		if respFail.Errcode == -1 {
+			errCode = -1
+			time.Sleep(time.Duration(i+1) * time.Microsecond * 500)
+			continue
+		}
+		return nil, errors.New(respFail.Errmsg)
 	}
 
 	return nil, nil

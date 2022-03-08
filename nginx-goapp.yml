@@ -1,0 +1,21 @@
+version: '2'
+
+services:
+  nginx:
+    restart: always
+    image: nginx
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - /docker/volumes/nginx/conf.d:/etc/nginx/conf.d
+      - /docker/volumes/nginx/certs:/etc/nginx/certs:ro
+      - /docker/volumes/nginx/vhost:/etc/nginx/vhost.d
+      - /docker/volumes/nginx/dhparam:/etc/nginx/dhparam
+      - /docker/volumes/nginx/html:/usr/share/nginx/html
+  
+  goapp:
+    restart: always
+    image: mini:20220308
+    ports:
+      - "8080:8080"

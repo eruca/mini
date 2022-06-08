@@ -42,16 +42,6 @@ func wxCheckSignature(c *gin.Context) {
 	log.Println("un successed")
 }
 
-// WXTextMsg 微信文本消息结构体
-type WXTextMsg struct {
-	ToUserName   string
-	FromUserName string
-	CreateTime   int64
-	MsgType      string
-	Content      string
-	MsgId        int64
-}
-
 // CheckSignature 微信公众号签名检查
 func checkSignature(signature, timestamp, nonce, token string) bool {
 	h := sha1.New()
@@ -68,14 +58,14 @@ func checkSignature(signature, timestamp, nonce, token string) bool {
 
 // WXMsgReceive 微信消息接收
 func WXMsgReceive(c *gin.Context) {
-	var textMsg WXTextMsg
+	var textMsg WxMenuEvent
 	err := c.ShouldBindXML(&textMsg)
 	if err != nil {
 		log.Printf("[消息接收] - XML数据包解析失败: %v\n", err)
 		return
 	}
 
-	log.Printf("[消息接收] - 收到消息, 消息类型为: %s, 消息内容为: %s\n", textMsg.MsgType, textMsg.Content)
+	log.Printf("[消息接收] - 收到消息, 消息类型为: %s, 消息内容为: <%#v>\n", textMsg.MsgType, textMsg)
 
 	// 对接收的消息进行被动回复
 	WXMsgReply(c, textMsg.ToUserName, textMsg.FromUserName)

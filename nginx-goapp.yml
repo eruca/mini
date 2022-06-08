@@ -16,6 +16,6 @@ services:
   
   goapp:
     restart: always
-    image: mini:20220308
+    build: .
     ports:
       - "8080:8080"

@@ -1,22 +1,64 @@
 {
-    "button":[
-    {	
-         "type":"click",
-         "name":"今日歌曲",
-         "key":"V1001_TODAY_MUSIC"
-     },
-     {
-          "name":"菜单",
-          "sub_button":[
-          {	
-              "type":"view",
-              "name":"关于我们",
-              "url":"https://mini.docin.icu/icu/hello.html"
-           },
-           {
-              "type":"click",
-              "name":"赞一下我们",
-              "key":"V1001_GOOD"
-           }]
-      }]
+    "button": [
+        {
+            "name": "重症医学科",
+            "sub_button": [
+                {
+                    "type": "view",
+                    "name": "党建品牌",
+                    "url": "https://mini.docin.icu/icu/index.html"
+                },
+                {
+                    "type": "view",
+                    "name": "科室介绍",
+                    "url": "https://mini.docin.icu/icu/hello.html"
+                },
+                {
+                    "type": "view",
+                    "name": "团队介绍",
+                    "url": "https://mini.docin.icu/icu/hello.html"
+                }
+            ]
+        },
+        {
+            "name": "技术",
+            "sub_button": [
+                {
+                    "type": "view",
+                    "name": "科普",
+                    "url": "https://mini.docin.icu/icu/hello.html"
+                },
+                {
+                    "type": "view",
+                    "name": "科研",
+                    "url": "https://mini.docin.icu/icu/hello.html"
+                },
+                {
+                    "type": "view",
+                    "name": "病例分享",
+                    "url": "https://mini.docin.icu/icu/hello.html"
+                }
+            ]
+        },
+        {
+            "name": "人文",
+            "sub_button": [
+                {
+                    "type": "view",
+                    "name": "照片墙",
+                    "url": "https://mini.docin.icu/icu/hello.html"
+                },
+                {
+                    "type": "view",
+                    "name": "荣誉墙",
+                    "url": "https://mini.docin.icu/icu/hello.html"
+                },
+                {
+                    "type": "view",
+                    "name": "关于我们",
+                    "url": "https://mini.docin.icu/icu/hello.html"
+                }
+            ]
+        }
+    ]
 }
